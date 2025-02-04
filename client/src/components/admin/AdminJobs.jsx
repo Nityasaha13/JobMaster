@@ -30,7 +30,7 @@ const AdminJobs = () => {
         transition={ { duration: 0.5 } }
       >
         <Navbar />
-        <div className='max-w-6xl mx-auto my-10 p-5'>
+        <div className='max-w-6xl mx-auto my-10 p-5 mt-20'>
           <motion.div
             className='flex items-center justify-between my-5'
             initial={ { y: -20, opacity: 0 } }

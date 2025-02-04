@@ -23,7 +23,7 @@ const Companies = () => {
     return (
         <motion.div className="bg-white min-h-screen " initial={ { opacity: 0 } } animate={ { opacity: 1 } } transition={ { duration: 0.5 } }>
             <Navbar />
-            <div className="max-w-6xl mx-auto my-10 p-5">
+            <div className="max-w-6xl mx-auto my-10 p-5 mt-20">
                 <div className="flex items-center justify-between my-5">
                     <Input
                         className="w-fit p-2 border border-gray-300 rounded-md shadow-sm transition-all duration-300 focus:border-blue-400"

@@ -90,7 +90,7 @@ const UpdateJobs = () => {
         <div className="bg-white min-h-screen">
             <Navbar />
             <motion.div
-                className="flex items-center justify-center w-full my-5 pt-10"
+                className="flex items-center justify-center w-full my-5 pt-20"
                 initial={ { opacity: 0, y: -20 } }
                 animate={ { opacity: 1, y: 0 } }
                 transition={ { duration: 0.6 } }

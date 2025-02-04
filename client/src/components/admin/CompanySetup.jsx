@@ -85,7 +85,7 @@ const CompanySetup = () => {
             transition={ { duration: 0.5 } }
         >
             <Navbar />
-            <div className="max-w-xl mx-auto my-10 p-5 rounded-lg shadow-lg bg-gray-50">
+            <div className="max-w-xl mx-auto my-10 p-5 rounded-lg shadow-lg bg-gray-50 mt-20 border border-gray-200">
                 <form onSubmit={ submitHandler }>
                     <div className="flex items-center gap-5 p-4">
                         <Button

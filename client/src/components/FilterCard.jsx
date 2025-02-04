@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 const filterData = [
     {
         filterType: "Location",
-        array: ["Delhi NCR", "Bangalore", "Hyderabad", "Pune", "Mumbai"],
+        array: ["Delhi", "Bangalore", "Hyderabad", "Pune", "Mumbai"],
     },
     {
         filterType: "Industry",
@@ -14,7 +14,7 @@ const filterData = [
     },
     {
         filterType: "Skills",
-        array: ["React.js", "Java", "DevOps", "Swift", "Flutter", "AWS"]
+        array: ["React.js", "Java", "DevOps", "Swift", "Flutter", "AWS", "PHP"]
     },
 ];
 
