@@ -135,19 +135,21 @@ export const deleteJob = async(req, res) => {
 };
 
 
+
+
 /**
- * Fetch jobs from RapidAPI and save them to the database.
+ * Fetch jobs from RapidAPI (Startup Jobs API), clear old jobs, and save new ones.
  */
 export const fetchAndSaveJobs = async (req, res) => {
     try {
         const options = {
             method: "GET",
-            hostname: "linkedin-jobs-api2.p.rapidapi.com",
+            hostname: "startup-jobs-api.p.rapidapi.com",
             port: null,
-            path: "/active-jb-24h?title_filter=%22Data%20Engineer%22&location_filter=%22United%20States%22",
+            path: "/active-jb-7d?source=ycombinator",
             headers: {
-                "x-rapidapi-key": process.env.RAPIDAPI_KEY, // Store in .env
-                "x-rapidapi-host": "linkedin-jobs-api2.p.rapidapi.com",
+                "x-rapidapi-key": process.env.RAPIDAPI_KEY, // Store API key in .env
+                "x-rapidapi-host": "startup-jobs-api.p.rapidapi.com",
             },
         };
 
@@ -167,46 +169,53 @@ export const fetchAndSaveJobs = async (req, res) => {
                         return res.status(400).json({ message: "Invalid API response" });
                     }
 
-                    // Format and map data to job schema
+                    // ✅ Step 1: Clear the existing Job table before saving new ones
+                    await Job.deleteMany({});
+                    console.log("🔄 Old jobs cleared from the database");
+
+                    // ✅ Step 2: Map API response to Job Schema format
                     const jobsToInsert = apiData.map(job => ({
                         title: job.title,
-                        description: job.linkedin_org_description || "No description available.",
-                        requirements: job.linkedin_org_specialties || [],
+                        description: "No description available", // The API response does not include a description
+                        requirements: [], // API does not provide specific requirements
                         salary: job.salary_raw?.value?.minValue || 0, // Using minValue as salary
-                        experienceLevel: job.seniority || "N/A",
-                        location: job.locations_derived?.[0] || "Unknown",
+                        experienceLevel: job.seniority || "Not Specified",
+                        location: job.locations_derived?.[0] || "Remote", // Defaults to Remote if no location found
                         jobType: job.employment_type?.[0] || "Unknown",
-                        position: 1, // Default position value, update as needed
+                        position: 1, // Default position value
                         company: job.organization || "Unknown Company", // Fetch company name
-                        companyLogo: job.organization_logo || "", // Fetch company logo
-                        applyLink: job.url || "", // Fetch job application link
+                        companyLogo: job.organization_logo || "https://via.placeholder.com/150", // Fetch company logo
+                        applyLink: job.url || "#", // Fetch job application link
                         created_by: "Admin", // Placeholder user name
+                        createdAt: job.date_posted || new Date(), // Use API date or current date
                         applications: [],
                     }));
 
-                    // Insert into database
+                    // ✅ Step 3: Insert new jobs into the database
                     const insertedJobs = await Job.insertMany(jobsToInsert);
+
+                    console.log(`✅ ${insertedJobs.length} new jobs added successfully!`);
 
                     return res.status(201).json({
                         message: "Jobs successfully fetched and saved.",
                         jobs: insertedJobs,
                     });
                 } catch (error) {
-                    console.error("Error processing API response:", error);
+                    console.error("❌ Error processing API response:", error);
                     return res.status(500).json({ message: "Error processing API response" });
                 }
             });
         });
 
         request.on("error", (error) => {
-            console.error("Error fetching jobs:", error);
+            console.error("❌ Error fetching jobs:", error);
             return res.status(500).json({ message: "Error fetching jobs", error: error.message });
         });
 
         request.end();
 
     } catch (error) {
-        console.error("Server error:", error);
+        console.error("❌ Server error:", error);
         return res.status(500).json({ message: "Server error", error: error.message });
     }
 };

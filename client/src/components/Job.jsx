@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Button } from './ui/button';
 import { BookmarkPlus, ArrowUpRight } from 'lucide-react';
 import { Avatar, AvatarImage } from './ui/avatar';
@@ -17,15 +17,35 @@ const Job = ({ job }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const daysAgoFunction = (mongodbTime) => {
-        const createdAt = new Date(mongodbTime);
-        const currentTime = new Date();
-        const timeDifference = currentTime - createdAt;
-        return Math.floor(timeDifference / (1000 * 24 * 60 * 60));
+    /**
+     * Debugging: Check job details in console
+     */
+    // console.log("Job Data:", job);
+    
+    /**
+     * Function to return the correct company logo.
+     */
+    const getCompanyLogo = () => {
+        if (job?.companyLogo && job.companyLogo.trim() !== "") {
+            // console.log("✅ Using API Company Logo:", job.companyLogo);
+            return job.companyLogo; // Correctly fetched from API
+        }
+        console.log("⚠️ No logo found, using placeholder");
+        return "https://via.placeholder.com/150"; // Fallback placeholder
     };
 
-    const handleSaveForLater = async (jobId) => {
+    /**
+     * Convert MongoDB `createdAt` date to a formatted date string (YYYY-MM-DD).
+     */
+    const formatDate = (mongodbTime) => {
+        if (!mongodbTime) return "Unknown";
+        return new Date(mongodbTime).toISOString().split("T")[0]; // Extract YYYY-MM-DD
+    };
 
+    /**
+     * Handle saving a job for later.
+     */
+    const handleSaveForLater = async (jobId) => {
         try {
             const response = await axios.post(`${USER_API_END_POINT}/savedjob`, { jobId }, {
                 withCredentials: true
@@ -35,7 +55,6 @@ const Job = ({ job }) => {
                 toast.success(response.data.message);
             }
         } catch (error) {
-
             toast.error(error.response?.data?.message || 'Error saving job');
         }
     };
@@ -51,12 +70,20 @@ const Job = ({ job }) => {
             <Card key={ job.id } className="bg-gray-900 border-gray-800 w-full p-6 rounded-lg shadow-md">
                 <div className="flex items-start justify-between">
                     <div className="flex items-center">
+                        {/* ✅ Fixed: Displaying the correct Company Logo from API with debugging */}
                         <Avatar>
-                            <AvatarImage src={ job?.company?.logo } alt={ job?.company?.name } />
+                            <AvatarImage 
+                                src={ getCompanyLogo() } 
+                                alt={ job?.company || "Company" } 
+                                onError={(e) => { 
+                                    // console.error("❌ Image failed to load:", e.target.src);
+                                    e.target.src = "https://via.placeholder.com/150"; 
+                                }} // Fallback if image fails
+                            />
                         </Avatar>
                         <div className="ml-4">
                             <h3 className="text-lg font-semibold text-white">{ job?.title }</h3>
-                            <p className="text-gray-400">{ job?.company?.name }</p>
+                            <p className="text-gray-400">{ job?.company }</p> {/* ✅ Fixed: Displaying Company Name */}
                         </div>
                     </div>
                     <Button
@@ -74,7 +101,7 @@ const Job = ({ job }) => {
                         <Badge variant="secondary" className="mr-2">{ job?.position } Positions</Badge>
                         <span className="text-sm">{ job?.location }</span>
                     </div>
-                    <p className="text-gray-300 font-medium"> ₹ { job?.salary } LPA</p>
+                    <p className="text-gray-300 font-medium"> ${ job?.salary } year</p>
 
                     <div className="mt-4 flex items-center justify-between">
                         {
@@ -88,18 +115,35 @@ const Job = ({ job }) => {
                                 </Button>
                         }
 
+                        {/* ✅ Fixed: Displaying "Posted at: YYYY-MM-DD" instead of "X days ago" */}
                         <span className="text-xs sm:text-sm text-gray-400">
-                            { daysAgoFunction(job?.createdAt) === 0 ? 'Today' : `${daysAgoFunction(job?.createdAt)} days ago` }
+                            { formatDate(job?.createdAt) }
                         </span>
 
-                        <Button
+                        {/* <Button
                             className="text-blue-400 text-xs sm:text-sm py-1 sm:py-2 px-3 sm:px-4"
                             variant="ghost" size="sm"
                             onClick={ () => navigate(`/description/${job?._id}`) }
                         >
                             Details
                             <ArrowUpRight className="ml-2 h-4 w-4" />
+                        </Button> */}
+                        <Button
+                            className="text-blue-400 text-xs sm:text-sm py-1 sm:py-2 px-3 sm:px-4"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                                if (job?.applyLink) {
+                                    window.open(job.applyLink, "_blank"); // ✅ Opens job link in a new tab
+                                } else {
+                                    alert("No apply link available for this job.");
+                                }
+                            }}
+                        >
+                            Apply Link
+                            <ArrowUpRight className="ml-2 h-4 w-4" />
                         </Button>
+
                     </div>
                 </div>
             </Card>

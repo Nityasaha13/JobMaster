@@ -54,7 +54,7 @@ const Jobs = () => {
                     {/* Main Job List Section */ }
                     <div className="lg:col-span-3">
                         <motion.div
-                            className="grid grid-cols-1 gap-8"
+                            className="grid grid-cols-1 gap-2"
                             initial={ { opacity: 0 } }
                             animate={ { opacity: 1 } }
                             transition={ { duration: 0.5 } }

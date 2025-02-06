@@ -99,7 +99,7 @@ const ChatBoat = () => {
                     <div className="flex justify-between items-center">
                         <div className="flex items-center space-x-2">
                             <h2 className="font-bold text-lg text-gradient bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
-                                Hire Hub
+                                JobMaster
                             </h2>
                             <FaCircle className="text-green-500" />
                         </div>

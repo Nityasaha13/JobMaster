@@ -48,10 +48,10 @@ const AppliedJobTable = () => {
                                     transition={ { duration: 0.3, delay: index * 0.1 } }
                                 >
                                     <TableCell className="border-b border-gray-700 px-4 py-3">
-                                        { appliedJob?.job.title }
+                                        { appliedJob?.job?.title || 'No Title' } {/* Add a fallback text if title is unavailable */}
                                     </TableCell>
                                     <TableCell className="border-b border-gray-700 px-4 py-3">
-                                        { appliedJob?.job.company.name }
+                                        { appliedJob?.job?.company?.name || 'No Company' } {/* Add a fallback text if company name is unavailable */}
                                     </TableCell>
                                     <TableCell className="border-b border-gray-700 px-4 py-3">
                                         { new Date(appliedJob.createdAt).toLocaleDateString() }
