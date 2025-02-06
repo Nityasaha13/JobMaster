@@ -62,7 +62,7 @@ const UpdateJobs = () => {
         try {
             await axios.put(`${JOB_API_END_POINT}/update`, { ...input, jobId });
             toast.success('Job updated successfully!');
-            navigate('/jobs'); // Redirect to jobs list page
+            navigate('/jobs'); // Redirect to jobs list page 
         } catch (error) {
             toast.error('Failed to update the job. Please try again.');
             console.error(error);
