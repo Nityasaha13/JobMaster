@@ -18,14 +18,11 @@ const ChatBoat = () => {
     const [loading, setLoading] = useState(false);
     const [categories, setCategories] = useState([
         "Job Opportunities",
-        "Application Process",
+        // "Application Process",
         "Interview Tips",
-
-        "Company Culture",
-
-        "Resume Building",
+        // "Company Culture",
+        // "Resume Building",
         "Networking Tips",
-
     ]);
 
 

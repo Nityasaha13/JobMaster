@@ -160,66 +160,100 @@ export const logout = async(req, res) => {
     }
 }
 
+
+
 export const updateProfile = async(req, res) => {
     try {
         const { fullname, email, phoneNumber, bio, skills } = req.body;
-
         const file = req.file;
-        // cloudinary ayega idhar
-        let cloudResponse = null
+        
+        // Cloudinary integration to upload PDF file
         if (file) {
-            const fileUri = getDataUri(file);
-            cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+            // Check if the file is a PDF
+            if (file.mimetype !== 'application/pdf') {
+                return res.status(400).send('Only PDF files are allowed.');
+            }
+        
+            const fileUri = getDataUri(file); // Assuming getDataUri returns { content: base64string, ... }
+        
+            try {
+                // Uploading the file to Cloudinary
+                const cloudResponse = await cloudinary.uploader.upload(fileUri.content, {
+                    resource_type: "raw", // VERY IMPORTANT for PDFs
+                    access_mode: "public", // Make the PDF publicly accessible
+                    public_id: `resume-${Date.now()}`, // Unique public_id for the file
+                });
+        
+                console.log("Cloudinary response:", cloudResponse);
+        
+                // The `secure_url` returned from Cloudinary is already the correct URL to access the PDF
+                const publicUrl = cloudResponse.secure_url; // Do not append `.pdf`, Cloudinary already gives the correct URL
+                
+                console.log("Public URL:", publicUrl);
+        
+                // Send the public URL to the client or use it as needed
+                // Now proceed to update the user's profile
+                
+                let skillsArray;
+                if (skills) {
+                    skillsArray = skills.split(",");
+                }
+                const userId = req.id;
+                let user = await User.findById(userId);
+
+                if (!user) {
+                    return res.status(400).json({
+                        message: "User not found.",
+                        success: false
+                    });
+                }
+
+                // updating user data
+                if (fullname) user.fullname = fullname;
+                if (email) user.email = email;
+                if (phoneNumber) user.phoneNumber = phoneNumber;
+                if (bio) user.profile.bio = bio;
+                if (skills) user.profile.skills = skillsArray;
+
+                // resume comes later here...
+                if (cloudResponse) {
+                    // user.profile.resume = cloudResponse.secure_url; // Store Cloudinary URL
+                    user.profile.resume = publicUrl; // Store Cloudinary URL
+                    user.profile.resumeOriginalName = file.originalname; // Store the original file name
+                }
+
+                await user.save();
+
+                // Format the response object
+                user = {
+                    _id: user._id,
+                    fullname: user.fullname,
+                    email: user.email,
+                    phoneNumber: user.phoneNumber,
+                    role: user.role,
+                    profile: user.profile
+                };
+
+                return res.status(200).json({
+                    message: "Profile updated successfully.",
+                    user,
+                    success: true
+                });
+            } catch (error) {
+                console.error("Error uploading to Cloudinary:", error);
+                return res.status(500).send('Error uploading file to Cloudinary.');
+            }
+        } else {
+            return res.status(400).send('No file uploaded.');
         }
-
-
-        let skillsArray;
-        if (skills) {
-            skillsArray = skills.split(",");
-        }
-        const userId = req.id;
-        let user = await User.findById(userId);
-
-        if (!user) {
-            return res.status(400).json({
-                message: "User not found.",
-                success: false
-            })
-        }
-        // updating data
-        if (fullname) user.fullname = fullname
-        if (email) user.email = email
-        if (phoneNumber) user.phoneNumber = phoneNumber
-        if (bio) user.profile.bio = bio
-        if (skills) user.profile.skills = skillsArray
-
-        // resume comes later here...
-        if (cloudResponse) {
-            user.profile.resume = cloudResponse.secure_url;
-            user.profile.resumeOriginalName = file.originalname; // Save the original file name
-        }
-
-
-        await user.save();
-
-        user = {
-            _id: user._id,
-            fullname: user.fullname,
-            email: user.email,
-            phoneNumber: user.phoneNumber,
-            role: user.role,
-            profile: user.profile
-        }
-
-        return res.status(200).json({
-            message: "Profile updated successfully.",
-            user,
-            success: true
-        })
     } catch (error) {
         console.log(error);
+        return res.status(500).send('Error updating profile.');
     }
-}
+};
+
+
+
 
 export const savedJobs = async(req, res) => {
     try {

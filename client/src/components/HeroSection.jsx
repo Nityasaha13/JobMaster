@@ -20,7 +20,7 @@ const HeroSection = () => {
     };
 
     const handleNavigation = () => {
-        toast.success('Please Login into Recruiter AAccount  ')
+        toast.success('Please Login into Recruiter Account')
         navigate('/signup')
     }
     return (
