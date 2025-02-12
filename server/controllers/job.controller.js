@@ -139,6 +139,7 @@ export const deleteJob = async(req, res) => {
 
 /**
  * Fetch jobs from RapidAPI (Startup Jobs API), clear old jobs, and save new ones.
+ * The API is - http://localhost:8000/api/v1/job/fetch-jobs
  */
 export const fetchAndSaveJobs = async (req, res) => {
     try {
@@ -170,8 +171,8 @@ export const fetchAndSaveJobs = async (req, res) => {
                     }
 
                     // ✅ Step 1: Clear the existing Job table before saving new ones
-                    await Job.deleteMany({});
-                    console.log("🔄 Old jobs cleared from the database");
+                    // await Job.deleteMany({});
+                    // console.log("🔄 Old jobs cleared from the database");
 
                     // ✅ Step 2: Map API response to Job Schema format
                     const jobsToInsert = apiData.map(job => ({
