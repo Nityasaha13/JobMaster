@@ -9,6 +9,7 @@ import axios from 'axios';
 import { USER_API_END_POINT } from '@/utils/constant';
 import { setUser } from '@/redux/authSlice';
 import { toast } from 'sonner';
+import logo from '../../assets/jobmasterlogo.png'; 
 
 const Navbar = () => {
     const { user } = useSelector((store) => store.auth);
@@ -44,7 +45,8 @@ const Navbar = () => {
                         className="text-2xl font-bold text-white cursor-pointer flex items-center"
                         onClick={ () => navigate('/') }
                     >
-                        JobMaster <span className="text-blue-400">Pro</span>
+                        {/* JobMaster <span className="text-blue-400">Pro</span> */}
+                        <img src={ logo } alt="Logo" className='h-12' />
                     </div>
 
                     {/* Mobile Menu Toggle */ }

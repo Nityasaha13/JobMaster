@@ -21,7 +21,7 @@ const HeroSection = () => {
 
     const handleNavigation = () => {
         toast.success('Please Login into Recruiter Account')
-        navigate('/signup')
+        navigate('/login')
     }
     return (
         <div className="relative content-center overflow-hidden pt-16 bg-gradient-to-br from-[#00040A] to-[#001636] min-h-screen text-white px-6 py-16">
@@ -79,9 +79,14 @@ const HeroSection = () => {
             >
                 <Input
                     type="text"
-                    value={ query }
+                    value={query}
                     placeholder="Search by job title or skills"
-                    onChange={ (e) => setQuery(e.target.value) }
+                    onChange={(e) => setQuery(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                            searchJobHandler(e);
+                        }
+                    }}
                     className="w-full p-3 outline-none border-none bg-transparent text-white placeholder-gray-400 rounded-full focus:ring-2 focus:ring-blue-500"
                 />
 
