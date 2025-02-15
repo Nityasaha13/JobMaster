@@ -33,8 +33,8 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
 
     const fileChangeHandler = (e) => {
         const file = e.target.files?.[0];
-        if (file && !file.type.startsWith("image/")) {
-            setFileError("Only images are allowed (.jpeg, .png, .webp)");
+        if (file && !file.type.startsWith("pdf/")) {
+            setFileError("Only images are allowed (.pdf)");
         } else {
             setFileError("");
         }

@@ -76,7 +76,7 @@ const Profile = () => {
                             </div>
                         </div>
                         <div className="my-5">
-                            <Label className="text-md font-bold text-white">Resume</Label>
+                            <Label className="text-md font-bold text-white">Resume </Label>
                             { isResume ? (
                                 <a
                                     target="_blank"

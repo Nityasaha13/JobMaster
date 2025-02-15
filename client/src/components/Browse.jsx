@@ -18,10 +18,8 @@ const Browse = () => {
     const [query, setQuery] = useState('');
 
     useEffect(() => {
-        return () => {
-            dispatch(setSearchedQuery(''));
-        };
-    }, [dispatch]);
+        setQuery(searchedQuery); // Update the local query state with the searchedQuery from Redux
+    }, [searchedQuery]);
 
     const searchJobHandler = (e) => {
         e.preventDefault();
@@ -45,6 +43,11 @@ const Browse = () => {
                         value={query}
                         placeholder="Search by job title or skills"
                         onChange={(e) => setQuery(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                searchJobHandler(e);
+                            }
+                        }}
                         className="w-full p-3 outline-none border-none bg-transparent text-white placeholder-gray-400 rounded-full focus:ring-2 focus:ring-blue-500"
                     />
                     <Button
