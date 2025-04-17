@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { USER_API_END_POINT } from '@/utils/constant';
 import { Card } from '@/components/ui/card';
 import axios from 'axios';
+import { Description } from '@radix-ui/react-dialog';
 
 const Job = ({ job }) => {
     const { savedJobs } = useSelector(store => store.auth);
@@ -129,20 +130,21 @@ const Job = ({ job }) => {
                             <ArrowUpRight className="ml-2 h-4 w-4" />
                         </Button> */}
                         <Button
-                            className="text-blue-400 text-xs sm:text-sm py-1 sm:py-2 px-3 sm:px-4"
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => {
-                                if (job?.applyLink) {
-                                    window.open(job.applyLink, "_blank"); // ✅ Opens job link in a new tab
-                                } else {
-                                    alert("No apply link available for this job.");
-                                }
-                            }}
+                        className="text-blue-400 text-xs sm:text-sm py-1 sm:py-2 px-3 sm:px-4"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                            if (job?.applyLink) {
+                            window.open(job.applyLink, "_blank");
+                            } else {
+                            window.open(`/description/${job?._id}`);
+                            }
+                        }}
                         >
-                            Apply Link
-                            <ArrowUpRight className="ml-2 h-4 w-4" />
+                        {job?.applyLink ? 'Apply Link' : 'View Description'}
+                        <ArrowUpRight className="ml-2 h-4 w-4" />
                         </Button>
+
 
                     </div>
                 </div>
